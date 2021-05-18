@@ -6,12 +6,12 @@ const bodyParser = require("body-parser");
 const {sequelize} = require("./config/db");
 const {Game} = require("./models/game.model");
 const app = express();
-const port = 3001;
+const port = 3000;
 
 // Solamente utilizar force: true para aplicar cambios sobre modelos/tablas
 // Borra toda la información para poder ajustar los modelos/tablas
 // Nota: profesionalmente, se utiliza algo llamado "Migrations"
-// sequelize.sync({force: true});
+ // sequelize.sync({force: true});
 
 // Una vez que tenemos los modelos, omitimos el force para que la información se mantenga
 sequelize.sync({});
@@ -50,6 +50,9 @@ app.get("/", (req, res) => {
         console.log('games.length', games.length);
         games.forEach((game) => {
             console.log('game.name', game.name);
+            // console.log('game.genre', game.genre);
+           // console.log('game.rating', game.rating);
+
         });
 
         // Renderizar (mostrar) el archivo ejs: /views/pages/index.ejs
@@ -58,6 +61,7 @@ app.get("/", (req, res) => {
             // Permitir que el template utilice una variable games: cuyo valor será la variable games
             // Nombre variable en template: valor que tendrá
             games: games,
+            //aqui lo imprtante es que le pasamos al ejs la variabale games
         });
     })();
 
@@ -83,10 +87,12 @@ app.post("/create", (req, res) => {
     // 3) Configurar body-parser (ver arriba su uso)
     console.log("Name:", req.body.name);
     console.log("Genre:", req.body.genre);
+    console.log("Rating:", req.body.rating);
 
     // Crear una variable para facilitar el acceso al valor introducido
     let name = req.body.name;
     let genre = req.body.genre;
+    let rating = req.body.rating;
 
     (async () => {
         // Crear un nuevo Game (registro en la base de datos) usando la
@@ -94,6 +100,7 @@ app.post("/create", (req, res) => {
         let game = await Game.create({
             name: name,
             genre: genre,
+            rating: rating,
         });
 
         // No se debe renderizar directamente la vista
@@ -124,6 +131,8 @@ app.post('/update', (req, res, next) => {
     let id = req.body.id;
     let name = req.body.name;
     let genre = req.body.genre;
+    let rating = req.body.rating;
+
 
     (async () => {
         // Reconsultamos el registro de la BD
@@ -132,6 +141,7 @@ app.post('/update', (req, res, next) => {
         // Actualizamos sus valores
         game.name = name;
         game.genre = genre;
+        game.rating = rating;
 
         // Actualizamos la base de datos
         await game.save();
@@ -140,7 +150,7 @@ app.post('/update', (req, res, next) => {
     })();
 });
 
-// Delete
+// Delete  (borra registro de DB)
 app.post('/delete', (req, res, next) => {
     (async () => {
         let id = req.body.id;

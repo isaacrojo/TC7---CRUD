@@ -19,6 +19,10 @@ Game.init({
         // NON NULL (obligatorio)
         allowNull: false,
     },
+    rating: {
+        type: DataTypes.DECIMAL,
+        allowNull: false,
+    },
 
 }, {
     // Conexión (requerida)

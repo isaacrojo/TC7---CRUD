@@ -12,7 +12,9 @@
     <ul>
         <% games.forEach((game) => { %>
             <li>
-                <%= game.name %>
+                <%= game.name %> (<%= game.rating %>)
+                <br>
+                <i> <%= game.genre %>  </i>
 
                 <a href="/update/<%= game.id %>">Editar</a>
 
