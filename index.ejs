@@ -16,7 +16,9 @@
                 <br>
                 <i> <%= game.genre %>  </i>
 
-                <a href="/update/<%= game.id %>">Editar</a>
+                <a href="/update/<%= game.id %>">Edit</a>
+                <br>
+                <a href="/details/<%= game.id %>"><%= game.name %> (<%= game.rating %>) Details</a>
 
                 <!-- Form para poder enviar un POST y borrar el registro -->
                 <!-- No es un GET, ya que no consulta información -->

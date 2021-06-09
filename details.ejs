@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game details</title>
+</head>
+<body>
+    <br>
+    <a href="/">&lt;-- Return Home</a>
+    <br> 
+<hr>
+    <h1><%= game.name %></h1>
+    <p>Genre: <%= game.genre %></p>
+    <br>
+    <p>Rate: <%= game.rating %></p>
+    <br>
+<hr>
+    <br>
+    <h3>Comments</h3>
+    <form action="/details/create" method="POST">
+        <input type="hidden" name="gameId" value="<%= game.id %>">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+        </div>
+        <br>
+        <div>
+            <label for="content">Comment:</label>
+            <input type="text" id="content" name="content">
+        </div>
+        <br>
+        <button>Add comment</button>
+    </form>
+    <br>
+<hr>
+    <% comments.forEach((comment) => { %>
+        <div>
+            <p>User:
+            <%= comment.username %> </p>
+            <br>
+            <p>said... 
+            <%= comment.content %> </p>
+        </div>
+        <hr>
+    <% }); %>
+</body>
+</html>

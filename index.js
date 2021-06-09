@@ -5,13 +5,17 @@ const bodyParser = require("body-parser");
 // Un objeto, que dentro tiene a "sequelize"
 const {sequelize} = require("./config/db");
 const {Game} = require("./models/game.model");
+const {Comment} = require("./models/comment.model");
 const app = express();
 const port = 3000;
+
+
+Game.hasMany(Comment);
 
 // Solamente utilizar force: true para aplicar cambios sobre modelos/tablas
 // Borra toda la información para poder ajustar los modelos/tablas
 // Nota: profesionalmente, se utiliza algo llamado "Migrations"
- // sequelize.sync({force: true});
+ //sequelize.sync({force: true});
 
 // Una vez que tenemos los modelos, omitimos el force para que la información se mantenga
 sequelize.sync({});
@@ -35,18 +39,8 @@ app.get("/", (req, res) => {
         // Consultar todos los "Game" desde la base de datos
         let games = await Game.findAll();
 
-        // Muestra demasiada información
-        // console.log(games);
 
-        // Mostrar como JSON
-        // console.log(JSON.stringify(games, null, 4));
-
-        // Mostrar con un for
-        // Cada Game tiene la siguiente estructura:
-        // {
-        //     name: 'Sekiro',
-        //     genre: 'Action RPG',
-        // }
+        //esto escribe en la consola nomas jaja
         console.log('games.length', games.length);
         games.forEach((game) => {
             console.log('game.name', game.name);
@@ -66,6 +60,60 @@ app.get("/", (req, res) => {
     })();
 
 });
+
+// #P7 -CREATE Part1- Agregar vista para ver detalles de un registro
+// (localhost:3000/details) se hace esto:
+//    oooo es "/details:id"  ?
+app.get('/details/:id', (req, res, next)=> {
+    let id = req.params.id;
+
+    (async () => {
+        // Consultar un registro "Details" de la DB
+        let game = await Game.findByPk(id);
+
+        let comments = await Comment.findAll({
+            where: {
+                gameId: id,
+            },
+        });
+
+        res.render("pages/details", {
+        // Pasar la información de los details al ejs (html) para mostrarlos
+        // Permitir que el template utilice una variable details: cuyo valor será la variable details   
+            game: game,
+            comments: comments,
+        });
+
+    })();
+
+});
+
+// #P7 -CREATE Part2- Agregar vista para ver detalles de un registro
+// Cuando alguien envíe información mediante POST a la url "/details" (localhost:3000/details), se hace esto
+// Leer el "formulario" (los inputs del formulario) y realmente crear el registro en la base de datos
+app.post('/details/create', (req, res, next) => {
+    let gameId = req.body.gameId;
+    let username = req.body.username;
+    let content = req.body.content;
+
+
+    (async () => {
+        // Crear un nuevo Detail (registro en la base de datos) usando la
+        // información obtenida desde el formulario
+        await Comment.create({
+            username: username,
+            content: content,
+            // gameId es una columna que se agrega automáticamente debido a la relación
+            // entre ambos modelos
+            gameId: gameId,
+        });
+
+        // Redireccionar al usuario
+        res.redirect('/details/' + gameId);
+    })();
+});
+
+
 
 // Create, parte 1
 // Cuando alguien ingrese a la url "/create" (localhost:3000/create), se hace esto
